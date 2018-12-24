@@ -11,16 +11,26 @@ class DatabaseRepository {
         newData.taskData.push(req.body.taskData);
 
         let queryObj = { warningMessage: req.body.warning };
+        let datamodelObject = new datamodel(data);
+        var warningData = await this.GetData(queryObj, datamodelObject);
         try {
-            let datamodelObject = new datamodel(data);
-            return await datamodelObject.findOneAndUpdate(queryObj, newData);
+            warningData.taskData.push(req.body.taskData)
+            return await datamodelObject.findOneAndUpdate(queryObj, warningData);
         } catch (err) {
             next(err);
         }
     }
 
-    async GetData() {
-        
+    async GetData(queryObj, modelObject) {
+        try {
+            // return the data
+
+
+            return await modelObject.findOne(queryObj);
+        }
+        catch (err) {
+            throw err;
+        }
     }
 }
 
