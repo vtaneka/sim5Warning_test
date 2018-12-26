@@ -4,23 +4,19 @@ const warning = require("./DataModel")
 
 class DatabaseRepository {
     async PostData(req, res, next) {
+        let reqData = req.body;
+        let queryObj = { warning: reqData.warning };
 
-        var newData = {};
-        newData.warningMessage = req.body.warning;
-        newData.taskData = [];
-        newData.taskData.push(req.body.taskData);
-
-        let queryObj = { warningMessage: req.body.warning };
-        let datamodelObject = new warning(req.body);
+        let datamodelObject = new warning(reqData);
         try {
             var warningData = await this.GetData(queryObj, warning);
 
-            if (warningData) {
-                warningData.taskData.push(req.body.taskData)
+            if (warningData != null) {
+                warningData.taskData.push(reqData.taskData)
                 await warning.findOneAndUpdate(queryObj, warningData);
             }
             else {
-                await datamodelObject.save(req.body);
+                await datamodelObject.save(reqData);
             }
 
         } catch (err) {
