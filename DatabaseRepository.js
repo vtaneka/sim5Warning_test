@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const datamodel = require("./DataModel")
+const warning = require("./DataModel")
 
 
 class DatabaseRepository {
@@ -11,11 +11,18 @@ class DatabaseRepository {
         newData.taskData.push(req.body.taskData);
 
         let queryObj = { warningMessage: req.body.warning };
-        let datamodelObject = new datamodel(data);
-        var warningData = await this.GetData(queryObj, datamodelObject);
+        let datamodelObject = new warning(req.body);
         try {
-            warningData.taskData.push(req.body.taskData)
-            return await datamodelObject.findOneAndUpdate(queryObj, warningData);
+            var warningData = await this.GetData(queryObj, warning);
+
+            if (warningData) {
+                warningData.taskData.push(req.body.taskData)
+                await warning.findOneAndUpdate(queryObj, warningData);
+            }
+            else {
+                await datamodelObject.save(req.body);
+            }
+
         } catch (err) {
             next(err);
         }

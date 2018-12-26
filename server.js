@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const DataRepository = require('./DatabaseRepository');
 
+var app = express();
+
 
 app.use(bodyParser.json({ limit: '5mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -11,8 +13,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 
 
+
 try {
-    mongoose.connect("mongodb://vtaneka:compro1234@ds243084.mlab.com:43084/sim5_test_db");
+    mongoose.connect("mongodb://compro:compro1234@ds243084.mlab.com:43084/sim5_test_db");
 }
 catch (e) {
     console.log("failed to establish mlab connection");
@@ -21,17 +24,17 @@ catch (e) {
 
 
 
-app.post("/postDepraction",DataRepository.PostData);
-
-
+app.post("/postDepraction", DataRepository.PostData.bind(DataRepository));
 
 const db = mongoose.connection;
+
+
 
 db.on("connected", function () {
     console.log("mongoose connection established");
 });
 
-db.on("disconnected", function () {
+db.on("disconnected", function (data, err) {
     console.log("mongoose connection terminated");
 })
 
