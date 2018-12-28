@@ -9,13 +9,13 @@ var app = express();
 
 app.use(bodyParser.json({ limit: '5mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
-
-
+var cors = require('cors');
+app.use(cors({origin: "*"}));
 
 
 
 try {
-    mongoose.connect("mongodb://compro:compro1234@ds243084.mlab.com:43084/sim5_test_db");
+    mongoose.connect(process.env.MONGO_CONNECTION_URL);
 }
 catch (e) {
     console.log("failed to establish mlab connection");
@@ -24,7 +24,7 @@ catch (e) {
 
 
 
-app.post("/postDepraction", DataRepository.PostData.bind(DataRepository));
+app.post("/postDepracation", DataRepository.PostData.bind(DataRepository));
 
 const db = mongoose.connection;
 
