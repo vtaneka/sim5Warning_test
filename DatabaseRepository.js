@@ -8,12 +8,23 @@ class DatabaseRepository {
         let queryObj = { warning: reqData.warning };
 
         let datamodelObject = new warning(reqData);
+
         try {
+            let repetition = false;
             var warningData = await this.GetData(queryObj, warning);
 
             if (warningData != null) {
-                warningData.taskData.push(reqData.taskData)
-                await warning.findOneAndUpdate(queryObj, warningData);
+                for (let index = 0; index < warningData.taskData.length; ++index) {
+                    if (reqData.taskData.id == warningData.taskData[index].id && reqData.taskData.trace == warningData.taskData[index].trace
+                    ) {
+                        repetition = true;
+                        break;
+                    }
+                }
+                if (repetition != true) {
+                    warningData.taskData.push(reqData.taskData)
+                    await warning.findOneAndUpdate(queryObj, warningData);
+                }
             }
             else {
                 await datamodelObject.save(reqData);
